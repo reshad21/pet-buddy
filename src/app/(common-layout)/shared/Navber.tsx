@@ -13,7 +13,6 @@ export default function NavBar() {
   const routeMap: Record<string, string> = {
     user: "/dashboard",
     admin: "/dashboard/admin",
-    driver: "/dashboard/driver",
   };
 
   return (
@@ -27,11 +26,6 @@ export default function NavBar() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem isActive>
-          <Link href="#" aria-current="page">
-            Customers
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
           {/* {user && <Link href={routeMap[user?.role]}>Dashboard</Link>} */}
           <Link href={routeMap.user}>Dashboard</Link>
         </NavbarItem>

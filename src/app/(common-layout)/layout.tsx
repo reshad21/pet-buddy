@@ -8,12 +8,10 @@ const layout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <div className="min-h-screen w-full">
-      <div className="max-w-7xl mx-auto">
-        <NavBar />
-        {children}
-        <Footer />
-      </div>
+    <div className="max-w-7xl mx-auto min-h-screen">
+      <NavBar />
+      {children}
+      <Footer />
     </div>
   );
 };
