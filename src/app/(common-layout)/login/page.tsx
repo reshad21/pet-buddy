@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { FaGoogle } from "react-icons/fa";
 const LoginPage = () => {
@@ -56,7 +57,9 @@ const LoginPage = () => {
           className="w-full bg-red-500 text-white py-3 rounded-lg mt-4 hover:bg-red-600 transition duration-300 flex items-center justify-center"
           onClick={() => {
             // Handle Google Login logic here
-            console.log("Google Login clicked");
+            signIn("google", {
+              callbackUrl: "http://localhost:3000/",
+            });
           }}
         >
           <FaGoogle size={20} className="mr-2" />

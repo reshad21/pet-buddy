@@ -40,6 +40,7 @@ export default function NavBar() {
           </Link>
         </NavbarItem>
       </NavbarContent>
+
       <NavbarContent justify="end">
         <NavbarItem>
           <ThemeSwitcher />
