@@ -1,19 +1,31 @@
 "use client";
 import {
+  Button,
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
 } from "@nextui-org/react";
 import { Cat } from "lucide-react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
-export default function NavBar() {
+type userProps = {
+  user?: {
+    name?: string | null | undefined;
+    email?: string | null | undefined;
+    image?: string | null | undefined;
+  };
+};
+
+export default function NavBar({ session }: { session: userProps | null }) {
   const routeMap: Record<string, string> = {
     user: "/dashboard",
     admin: "/dashboard/admin",
   };
+
+  console.log(session);
 
   return (
     <Navbar maxWidth="2xl">
@@ -46,9 +58,9 @@ export default function NavBar() {
           <ThemeSwitcher />
         </NavbarItem>
 
-        {/* {user ? (
+        {session?.user ? (
           <NavbarItem>
-            <Button onClick={logOutUser} color="primary" variant="flat">
+            <Button onClick={() => signOut()} color="primary" variant="flat">
               Logout
             </Button>
           </NavbarItem>
@@ -56,7 +68,7 @@ export default function NavBar() {
           <NavbarItem className="hidden lg:flex">
             <Link href="/login">Login</Link>
           </NavbarItem>
-        )} */}
+        )}
       </NavbarContent>
     </Navbar>
   );
