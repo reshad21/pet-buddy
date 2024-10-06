@@ -2,8 +2,11 @@
 import { motion } from "framer-motion";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { FaGoogle } from "react-icons/fa";
 const LoginPage = () => {
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
   // You can later add an actual Google login function here
 
   return (
@@ -58,7 +61,7 @@ const LoginPage = () => {
           onClick={() => {
             // Handle Google Login logic here
             signIn("google", {
-              callbackUrl: "http://localhost:3000/",
+              callbackUrl: redirect ? redirect : "http://localhost:3000/",
             });
           }}
         >

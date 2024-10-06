@@ -1,15 +1,14 @@
 "use client";
 import {
-  Button,
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
 } from "@nextui-org/react";
-import { Cat } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { Cog } from "lucide-react";
 import Link from "next/link";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+// import { ThemeSwitcher } from "./ThemeSwitcher";
 
 type userProps = {
   user?: {
@@ -20,47 +19,45 @@ type userProps = {
 };
 
 export default function NavBar({ session }: { session: userProps | null }) {
+  console.log("get user information in the navb menu-->", session?.user);
   const routeMap: Record<string, string> = {
     user: "/dashboard",
     admin: "/dashboard/admin",
   };
 
-  console.log(session);
-
   return (
     <Navbar maxWidth="2xl">
       <NavbarBrand>
         <Link className="flex" href="/">
-          <Cat />
-          <p className="font-bold text-inherit px-4">PET BUDDY</p>
+          <Cog />
+          <p className="font-bold text-inherit px-4">APOLLO GEARS</p>
         </Link>
       </NavbarBrand>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        <NavbarItem>
+          <Link color="foreground" href="/cars">
+            Cars
+          </Link>
+        </NavbarItem>
         <NavbarItem isActive>
+          <Link href="#" aria-current="page">
+            Customers
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
           {/* {user && <Link href={routeMap[user?.role]}>Dashboard</Link>} */}
           <Link href={routeMap.user}>Dashboard</Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="/login" aria-current="page">
-            Login
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="/register" aria-current="page">
-            Register
-          </Link>
-        </NavbarItem>
       </NavbarContent>
-
       <NavbarContent justify="end">
         <NavbarItem>
           <ThemeSwitcher />
         </NavbarItem>
 
-        {session?.user ? (
+        {/* {user ? (
           <NavbarItem>
-            <Button onClick={() => signOut()} color="primary" variant="flat">
+            <Button onClick={logOutUser} color="primary" variant="flat">
               Logout
             </Button>
           </NavbarItem>
@@ -68,7 +65,7 @@ export default function NavBar({ session }: { session: userProps | null }) {
           <NavbarItem className="hidden lg:flex">
             <Link href="/login">Login</Link>
           </NavbarItem>
-        )}
+        )} */}
       </NavbarContent>
     </Navbar>
   );
