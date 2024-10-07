@@ -1,25 +1,29 @@
 "use client";
+import { logOut } from "@/utils/logout";
 import {
+  Button,
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
 } from "@nextui-org/react";
 import { Cog } from "lucide-react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-// import { ThemeSwitcher } from "./ThemeSwitcher";
 
-type userProps = {
+type UserProps = {
   user?: {
-    name?: string | null | undefined;
-    email?: string | null | undefined;
-    image?: string | null | undefined;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    role?: string; // Added role to user type
   };
 };
 
-export default function NavBar({ session }: { session: userProps | null }) {
-  console.log("get user information in the navb menu-->", session?.user);
+export default function NavBar({ session }: { session: UserProps | null }) {
+  console.log("Get user information in the navbar menu:", session?.user);
+
   const routeMap: Record<string, string> = {
     user: "/dashboard",
     admin: "/dashboard/admin",
@@ -35,37 +39,60 @@ export default function NavBar({ session }: { session: userProps | null }) {
       </NavbarBrand>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="/cars">
-            Cars
+        <NavbarItem isActive>
+          <Link color="foreground" href="/about">
+            About
           </Link>
         </NavbarItem>
         <NavbarItem isActive>
-          <Link href="#" aria-current="page">
-            Customers
+          <Link color="foreground" href="/posts">
+            Posts
+          </Link>
+        </NavbarItem>
+        <NavbarItem isActive>
+          <Link href="/register" aria-current="page">
+            Register
+          </Link>
+        </NavbarItem>
+        <NavbarItem isActive>
+          <Link href="/profile" aria-current="page">
+            profile
           </Link>
         </NavbarItem>
         <NavbarItem>
-          {/* {user && <Link href={routeMap[user?.role]}>Dashboard</Link>} */}
-          <Link href={routeMap.user}>Dashboard</Link>
+          {session?.user?.role && (
+            <Link href={routeMap[session.user.role]}>Dashboard</Link>
+          )}
         </NavbarItem>
       </NavbarContent>
+
       <NavbarContent justify="end">
         <NavbarItem>
           <ThemeSwitcher />
         </NavbarItem>
 
-        {/* {user ? (
+        {session?.user ? (
           <NavbarItem>
-            <Button onClick={logOutUser} color="primary" variant="flat">
+            <Button
+              onClick={() => {
+                signOut({ callbackUrl: "/" });
+                logOut();
+              }}
+              color="primary"
+              variant="flat"
+            >
               Logout
             </Button>
           </NavbarItem>
         ) : (
           <NavbarItem className="hidden lg:flex">
-            <Link href="/login">Login</Link>
+            <Link href="/login" passHref>
+              <Button color="primary" variant="flat">
+                Login
+              </Button>
+            </Link>
           </NavbarItem>
-        )} */}
+        )}
       </NavbarContent>
     </Navbar>
   );

@@ -1,87 +1,45 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
-import { decode } from "./helpers/jwtHelpers";
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
-const authRoutes = ["/login", "/register", "/forget-password", "/recover-password"];
+const AuthRoutes = ["/login", "/register", "/forget-password"];
 
-export async function middleware(request: NextRequest) {
+type Role = keyof typeof roleBaseRoutes;
+
+const roleBaseRoutes = {
+    user: [/^\/profile/],
+    admin: [/^\/admin/],
+}
+// This function can be marked `async` if using `await` inside
+export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
+    console.log(pathname);
+    const user = {
+        name: "reshad",
+        token: "adf deos",
+        role: "user",
+    }
 
-    console.log(pathname, "pathname");
-
-    //pathname , acessToken
-
-    //pathname = admin-dashboard -> accessToken = admin -> admin-dashboard &&
-    //pathname = admin-dashboard -> accessToken = user -> home page
-
-    const accessToken = cookies().get("accessToken")?.value;
-
-    if (!accessToken) {
-        //Protecting hybrid routes
-        if (authRoutes.includes(pathname)) {
+    // const user = undefined;
+    if (!user) {
+        if (AuthRoutes.includes(pathname)) {
             return NextResponse.next();
         } else {
-            //   return NextResponse.redirect(new URL("/login", request.url));
-            return NextResponse.redirect(
-                new URL(
-                    pathname ? `/login?redirect=${pathname}` : "/login",
-                    request.url
-                )
-            );
+            return NextResponse.redirect(new URL('/login', request.url))
         }
     }
 
-    //Role based authorization
-
-    let decodedToken = null;
-
-    decodedToken = decode(accessToken) as any;
-
-    console.log(decodedToken, "decodedToken");
-
-    const role = decodedToken?.role;
-
-    console.log(role, "role");
-    console.log(pathname, "pathname");
-
-    // /admin-dashboard - ok
-    // /admin-dashboard/car-management - ok
-    if (role === "admin" && pathname.match(/^\/admin-dashboard/)) {
-        return NextResponse.next();
+    if (user?.role && roleBaseRoutes[user?.role as Role]) {
+        const routes = roleBaseRoutes[user?.role as Role];
+        // console.log(routes);
+        if (routes.some((route) => pathname.match(route))) {
+            return NextResponse.next();
+        }
     }
 
-    if (role === "driver" && pathname.match(/^\/driver-dashboard/)) {
-        return NextResponse.next();
-    }
-
-    // /dashboard , /dashboard/my-requested-rides , /profile
-    if (role === "user" && pathname.match(/^\/dashboard/)) {
-        return NextResponse.next();
-    }
-    if (role === "user" && pathname === "/profile") {
-        return NextResponse.next();
-    }
-
-    return NextResponse.redirect(new URL("/", request.url));
-
-    //decodedToken.role
+    return NextResponse.redirect(new URL('/', request.url))
 }
 
-//!accessToken -> /login -> jete dao
-
+// See "Matching Paths" below to learn more
 export const config = {
-    matcher: [
-        "/login",
-        "/register",
-        "/dashboard/:page*",
-        "/admin-dashboard/:page*",
-        "/driver-dashboard/:page*",
-    ],
-};
-
-//public - cars
-//private - admin, driver, user
-//hybrid - login, register
-
-//middleware.ts (dashboard, admin-dashboard) -> layout.tsx -> page.tax / dashboard/page.tsx
+    matcher: ["/profile", "/admin", "/login", "/register"]
+}
